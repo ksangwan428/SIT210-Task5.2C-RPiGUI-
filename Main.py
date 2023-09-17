@@ -1,91 +1,260 @@
 # Import necessary libraries
+import RPi.GPIO as GPIO, time
 from tkinter import *
-import tkinter.font
-from gpiozero import LED
-import RPi.GPIO
+from tkinter import ttk
 
 #2210994801
 
-# Setting up the Raspberry Pi pin mode to BCM
-RPi.GPIO.setmode(RPi.GPIO.BCM)
+# Initialize the main window for the GUI application
+window = Tk()
+window.geometry("400x150")
+window.title("String to Morse Code")
 
-### HARDWARE DEFINITIONS ###
-# Define LEDs with their BCM pin numbers
-red = LED(14)
-green = LED(15)
-blue = LED(18)
+# Create a frame within the main window to represent the radio
+radio_body = Frame(window, bg='black', bd=5)
+radio_body.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.95, anchor='center')
 
-### GUI DEFINITIONS ###
-# Setting up the main window
-win = Tk()
-win.title("Car LED Controller")
-myFont = tkinter.font.Font(family='Helvetica', size=12, weight="bold")
+# Label to act as the radio's display
+radio_display = Label(radio_body, bg='grey', font=('Arial', 12), text="Morse Code Radio")
+radio_display.pack(pady=5)
 
-# Canvas to draw the car representation
-canvas = Canvas(win, width=400, height=200, bg="white")
-canvas.grid(row=0, column=0, columnspan=5)
+# Styling for the tkinter widgets
+style = ttk.Style()
+style.configure('TButton', font=('Helvetica', 10), background='sky blue')
+style.configure('TEntry', font=('Helvetica', 10), padding=5)
 
-# Drawing car elements on the canvas
-canvas.create_rectangle(50, 100, 350, 180, fill="gray")  # Car body
-canvas.create_rectangle(80, 110, 320, 140, fill="blue")  # Car windows
-canvas.create_oval(70, 170, 110, 200, fill="black")      # Left wheel
-canvas.create_oval(290, 170, 330, 200, fill="black")     # Right wheel
+# Variable to capture text input from the user
+textInput = StringVar()
 
-### Event Functions ###
-# Define behavior for the Red LED button
-def RedLed():
-    if red.is_lit:
-        red.off()
-        canvas.itemconfig(red_light, fill="gray")
-    else:
-        red.on()
-        green.off()
-        blue.off()
-        canvas.itemconfig(red_light, fill="red")
+# GPIO settings for LED
+LED = 18
+unit = 0.5
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED, GPIO.OUT)
 
-# Define behavior for the Green LED button
-def GreenLed():
-    if green.is_lit:
-        green.off()
-        canvas.itemconfig(green_light, fill="gray")
-    else:
-        green.on()
-        red.off()
-        blue.off()
-        canvas.itemconfig(green_light, fill="green")
+# Morse code functions for dot, dash, and character spacing
 
-# Define behavior for the Blue LED button
-def BlueLed():
-    if blue.is_lit:
-        blue.off()
-        canvas.itemconfig(blue_light, fill="gray")
-    else:
-        blue.on()
-        red.off()
-        green.off()
-        canvas.itemconfig(blue_light, fill="blue")
+def dot():
+    # Signal a 'dot' in morse code with LED
+    GPIO.output(LED, True)
+    time.sleep(unit)
+    GPIO.output(LED, False)
+    time.sleep(unit)
 
-# Define behavior when the application is closed
-def close():
-    RPi.GPIO.cleanup()
-    win.destroy()
+def dash():
+    # Signal a 'dash' in morse code with LED
+    GPIO.output(LED, True)
+    time.sleep(unit*3)
+    GPIO.output(LED, False)
+    time.sleep(unit)
 
-# Drawing LED representations on the canvas
-red_light = canvas.create_oval(70, 110, 110, 140, fill="gray")
-green_light = canvas.create_oval(160, 110, 200, 140, fill="gray")
-blue_light = canvas.create_oval(290, 110, 330, 140, fill="gray")
+def newChar():
+    # Pause to signify the end of a character
+    time.sleep(unit*2)
 
-# Creating the radio buttons for LED control
-Radiobutton(win, text='Red LED', font=myFont, command=RedLed, bg='red', height=1, width=24).grid(row=1, column=0)
-Radiobutton(win, text='Green LED', font=myFont, command=GreenLed, bg='green', height=1, width=24).grid(row=1, column=1)
-Radiobutton(win, text='Blue LED', font=myFont, command=BlueLed, bg='blue', height=1, width=24).grid(row=1, column=2)
 
-# Exit button definition
-exitButton = Button(win, text='Exit', font=myFont, command=close, bg='red', height=1, width=6)
-exitButton.grid(row=1, column=3)
 
-# Attach close function to window close button event
-win.protocol("WM_DELETE_WINDOW", close)  
+# functions for each letter of the alphabet
+# calls the dot, dash and newChar functions in the relevant order
+def A():
+	dot()
+	dash()
 
-# Start the GUI event loop
-win.mainloop()
+def B():
+	dash()
+	dot()
+	dot()
+	dot()
+	
+def C():
+	dash()
+	dot()
+	dash()
+	dot()
+
+def D():
+	dash()
+	dot()
+	dot()
+	
+def E():
+	dot()
+
+def F():
+	dot()
+	dot()
+	dash()
+	dot()
+
+def G():
+	dash()
+	dash()
+	dot()
+	
+def H():
+	dot()
+	dot()
+	dot()
+	dot()
+	
+def I():
+	dot()
+	dot()
+	
+def J():
+	dot()
+	dash()
+	dash()
+	dash()
+	
+def K():
+	dash()
+	dot()
+	dash()
+	
+def L():
+	dot()
+	dash()
+	dot()
+	dot()
+	
+def M():
+	dash()
+	dash()
+	
+def N():
+	dash()
+	dot()
+	
+def O():
+	dash()
+	dash()
+	dash()
+	
+def P():
+	dot()
+	dash()
+	dash()
+	dot()
+	
+def Q():
+	dash()
+	dash()
+	dot()
+	dash()
+	
+def R():
+	dot()
+	dash()
+	dot()
+	
+def S():
+	dot()
+	dot()
+	dot()
+
+def T():
+	dash()
+	
+def U():
+	dot()
+	dot()
+	dash()
+	
+def V():
+	dot()
+	dot()
+	dot()
+	dash()
+	
+def W():
+	dot()
+	dash()
+	dash()
+	
+def X():
+	dash()
+	dot()
+	dot()
+	dash()
+
+def Y():
+	dash()
+	dot()
+	dash()
+	dash()
+	
+def Z():
+	dash()
+	dash()
+	dot()
+	dot()
+
+# iterates through the text input and calls the appropriate function for each letter
+def convertToCode():
+	MorseText = textInput.get()
+	if len(MorseText) > 12:
+		return
+	for i in MorseText:
+		if i.upper() == "A":
+			A()
+		elif i.upper() == "B":
+			B()
+		elif i.upper() == "C":
+			C()
+		elif i.upper() == "D":
+			D()
+		elif i.upper() == "E":
+			E()	
+		elif i.upper() == "F":
+			F()
+		elif i.upper() == "G":
+			G()
+		elif i.upper() == "H":
+			H()
+		elif i.upper() == "I":
+			I()
+		elif i.upper() == "J":
+			J()
+		elif i.upper() == "K":
+			K()
+		elif i.upper() == "L":
+			L()
+		elif i.upper() == "M":
+			M()
+		elif i.upper() == "N":
+			N()
+		elif i.upper() == "O":
+			O()
+		elif i.upper() == "P":
+			P()
+		elif i.upper() == "Q":
+			Q()
+		elif i.upper() == "R":
+			R()
+		elif i.upper() == "S":
+			S()
+		elif i.upper() == "T":
+			T()
+		elif i.upper() == "U":
+			U()
+		elif i.upper() == "V":
+			V()
+		elif i.upper() == "W":
+			W()
+		elif i.upper() == "X":
+			X()
+		elif i.upper() == "Y":
+			Y()
+		elif i.upper() == "Z":
+			Z()
+
+# GUI elements
+textEntry = ttk.Entry(radio_body, width=20, textvariable=textInput)
+convertButton = ttk.Button(radio_body, text="Convert to Morse Code", command=convertToCode)
+
+textEntry.pack(pady=5)
+convertButton.pack(pady=5)
+
+window.mainloop()
